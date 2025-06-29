@@ -1,5 +1,7 @@
 # ReelsBot
 
+![Interface](./screenshots/interface.png)
+
 AI-powered agent that generates complete scripts for Instagram Reels, YouTube Shorts and TikTok videos, tailored to the chosen topic, tone and target audience.
 
 ## Overview

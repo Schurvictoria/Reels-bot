@@ -16,24 +16,38 @@ class ReelsBotInterface:
         self.settings = get_settings()
     
     def create_interface(self) -> gr.Blocks:
-        
+
+        custom_theme = gr.themes.Base(
+            primary_hue="purple",
+            secondary_hue="pink",
+            neutral_hue="slate",
+            font=["Inter", "sans-serif"],
+        ).set(
+            button_primary_background_fill="linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+            button_primary_background_fill_hover="linear-gradient(135deg, #764ba2 0%, #667eea 100%)",
+        )
+
         with gr.Blocks(
             title="ReelsBot - AI Content Generator",
-            theme=gr.themes.Soft(),
+            theme=custom_theme,
             css=self._get_custom_css()
         ) as interface:
-            
+
             gr.HTML("""
-                <div style="text-align: center; margin-bottom: 30px;">
-                    <h1>🎬 ReelsBot</h1>
-                    <p>Make scroll-stopping Reels, Shorts, and TikToks in seconds.</p>
+                <div class="header-container">
+                    <div class="header-gradient">
+                        <h1 class="main-title">
+                            <span class="gradient-text">ReelsBot</span>
+                        </h1>
+                        <p class="subtitle">AI-Powered Content Generator for Reels, Shorts & TikToks</p>
+                    </div>
                 </div>
             """)
             
             with gr.Row():
-                with gr.Column(scale=1):
-                    gr.Markdown("### Content")
-                    
+                with gr.Column(scale=1, elem_classes=["input-column"]):
+                    gr.Markdown("### 📝 Content Settings")
+
                     topic = gr.Textbox(
                         label="Topic",
                         placeholder="e.g., '2-minute pasta', 'Morning routine', 'Study hacks'",
@@ -72,9 +86,9 @@ class ReelsBotInterface:
                     
                     generate_btn = gr.Button("🎬 Generate", variant="primary", size="lg")
                 
-                with gr.Column(scale=1):
-                    gr.Markdown("### Output")
-                    
+                with gr.Column(scale=1, elem_classes=["output-column"]):
+                    gr.Markdown("### 🎯 Generated Content")
+
                     status = gr.Textbox(label="Status", interactive=False)
                     
                     with gr.Tabs():
@@ -209,33 +223,116 @@ class ReelsBotInterface:
     def _get_custom_css(self) -> str:
         return """
         .gradio-container {
-            max-width: 1200px !important;
+            max-width: 1400px !important;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
         }
-        
-        .main-header {
+
+        .header-container {
             text-align: center;
+            padding: 2rem 0 3rem 0;
             margin-bottom: 2rem;
         }
-        
-        .generate-button {
-            background: linear-gradient(45deg, #FF6B6B, #4ECDC4) !important;
+
+        .header-gradient {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+            padding: 3rem 2rem;
+            border-radius: 20px;
+            border: 1px solid rgba(102, 126, 234, 0.2);
+        }
+
+        .main-title {
+            margin: 0;
+            padding: 0;
+            font-size: 3.5rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            margin-top: 1rem;
+            font-size: 1.2rem;
+            color: #64748b;
+            font-weight: 500;
+        }
+
+        .input-column, .output-column {
+            background: #394370 !important;
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            border: 1px solid #e5e7eb;
+        }
+
+        label {
+            font-weight: 600 !important;
+            color: #334155 !important;
+            margin-bottom: 0.5rem !important;
+        }
+
+        input, textarea, select {
+            border-radius: 8px !important;
+            border: 2px solid #e2e8f0 !important;
+            transition: all 0.2s !important;
+        }
+
+        input:focus, textarea:focus, select:focus {
+            border-color: #667eea !important;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1) !important;
+        }
+
+        .tabs {
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .tab-nav button {
+            font-weight: 600 !important;
+            padding: 0.75rem 1.5rem !important;
+        }
+
+        .tab-nav button[aria-selected="true"] {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+            color: white !important;
+        }
+
+        button {
+            border-radius: 10px !important;
+            font-weight: 600 !important;
+            transition: all 0.2s !important;
+        }
+
+        .primary-button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
             border: none !important;
             color: white !important;
-            font-weight: bold !important;
+            padding: 0.875rem 2rem !important;
+            font-size: 1.1rem !important;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4) !important;
         }
-        
-        .status-success {
-            color: #28a745 !important;
-            font-weight: bold !important;
+
+        .primary-button:hover {
+            transform: translateY(-2px) !important;
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5) !important;
         }
-        
-        .status-error {
-            color: #dc3545 !important;
-            font-weight: bold !important;
+
+        .examples {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: #f8fafc;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
         }
-        
-        .tab-nav {
-            background: #f8f9fa !important;
+
+        .examples h3 {
+            color: #334155;
+            margin-bottom: 1rem;
         }
         """
 
