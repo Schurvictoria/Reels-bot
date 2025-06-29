@@ -19,15 +19,12 @@ class PromptLoader:
         
         if cache_key in self._cache:
             return self._cache[cache_key]
-        
-        # Try to load platform-specific template first
+
         template_path = os.path.join(self.templates_dir, f"{template_type}_{platform}.txt")
         if not os.path.exists(template_path):
-            # Fallback to general template
             template_path = os.path.join(self.templates_dir, f"{template_type}_general.txt")
-        
+
         if not os.path.exists(template_path):
-            # Return default template if file doesn't exist
             logger.warning(f"Template file not found: {template_path}, using default")
             template = self._get_default_template(template_type, platform)
         else:
@@ -37,8 +34,7 @@ class PromptLoader:
             except Exception as e:
                 logger.error(f"Failed to load template {template_path}: {str(e)}")
                 template = self._get_default_template(template_type, platform)
-        
-        # Cache the template
+
         self._cache[cache_key] = template
         return template
     

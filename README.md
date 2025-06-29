@@ -1,8 +1,8 @@
-# 🎬 ReelsBot
+# ReelsBot
 
 AI-powered agent that generates complete scripts for Instagram Reels, YouTube Shorts and TikTok videos, tailored to the chosen topic, tone and target audience.
 
-## 🚀 Overview
+## Overview
 
 ReelsBot solves the pain point where creators and marketers waste hours brainstorming hooks, visuals, hashtags and still struggle to hit fast-moving trends. Our intelligent agent delivers an end-to-end Reels plan—idea, hook, storyline, timestamps, music suggestions and hashtag set—in seconds, keeping content on-brand and on-trend.
 
@@ -11,100 +11,111 @@ ReelsBot solves the pain point where creators and marketers waste hours brainsto
 - **Multi-Platform Support**: Instagram Reels, YouTube Shorts, TikTok
 - **Complete Content Generation**: Hook, storyline, script, timestamps
 - **Smart Hashtag Suggestions**: Trending and niche-specific tags
-- **Music Recommendations**: Built-in generic suggestions (no external APIs)
-- **Trend Analysis**: Heuristic-based trends (no external APIs)
+- **Music Recommendations**: Built-in generic suggestions
+- **Trend Analysis**: Heuristic-based trends
 - **Quality Scoring**: AI-powered content quality assessment
-- **Web Interface**: Beautiful Gradio UI for easy interaction
-- **REST API**: FastAPI backend for integration
+- **Web Interface**: Gradio UI
+- **REST API**: FastAPI backend
 - **Monitoring**: Weights & Biases experiment tracking
 
-## 🛠️ Tech Stack
+## Tech Stack
 
-- **AI/LLM**: OpenAI GPT-4o, LangChain,
+- **AI/LLM**: OpenAI GPT-4o, LangChain
 - **Backend**: Python, FastAPI
 - **Frontend**: Gradio
-- **APIs**: None required for music or trends
 - **Monitoring**: Weights & Biases
 - **Deployment**: Docker
 - **Testing**: pytest
 
-## 📋 Prerequisites
+## Prerequisites
 
-- Python 3.10+
+- Python 3.11
 - OpenAI API key
-- (Optional) None for music/trends
-- (Optional) Weights & Biases account
+- Weights & Biases account (optional)
 
-## 🚀 Quick Start
+## Quick Start
 
 ### 1. Clone and Setup
 
 ```bash
 git clone <repository-url>
-cd ReelsBot
+cd Reels-bot
 ```
 
 ### 2. Environment Configuration
 
-```bash
-# Copy environment template
-cp env.example .env
+The project includes a pre-configured `.env` file. You only need to add your OpenAI API key.
 
-# Edit .env with your API keys
+```bash
 nano .env
 ```
 
-Required environment variables:
+Required:
 ```env
-OPENAI_API_KEY=your-openai-api-key
-SECRET_KEY=your-secret-key
+OPENAI_API_KEY=sk-your-actual-openai-key
 ```
 
-Optional (for enhanced features):
+Optional:
 ```env
-WANDB_API_KEY=your-wandb-api-key
+WANDB_API_KEY=your-wandb-key
 ```
+
+Get your OpenAI API key from https://platform.openai.com/api-keys
 
 ### 3. Installation & Running
 
-#### Option A: Local Development
+#### Option A: Docker (Recommended)
+
 ```bash
-pip install -r requirements.txt
-
-./scripts/start.sh
-
-# Or start individually
-./scripts/start.sh api    # API only
-./scripts/start.sh ui     # UI only
+docker-compose up -d
+docker-compose ps
+docker-compose logs -f
+docker-compose down
 ```
 
-#### Option B: Docker
-```bash
-# Development
-./scripts/start.sh docker
+First-time build takes 5-10 minutes.
 
-# Production with monitoring
-./scripts/start.sh docker-prod
+#### Option B: Local Development
+
+Requires Python 3.11. Python 3.13+ has compatibility issues.
+
+```bash
+python3.11 -m venv .venv
+source .venv/bin/activate
+pip install -U pip
+pip install -r requirements.txt
+
+uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+python app/interface.py
+```
+
+#### Option C: Conda
+
+```bash
+conda create -n reels-bot-311 python=3.11 -y
+conda activate reels-bot-311
+pip install -U pip
+pip install -r requirements.txt
 ```
 
 ### 4. Access the Application
 
-- **Web Interface**: http://localhost:7860
-- **API Documentation**: http://localhost:8000/docs
-- **Health Check**: http://localhost:8000/health
+- Web Interface: http://localhost:7860
+- API Documentation: http://localhost:8000/docs
+- Health Check: http://localhost:8000/health
 
-## 🎯 Usage
+## Usage
 
 ### Web Interface
 
 1. Open http://localhost:7860
 2. Fill in content parameters:
-   - **Topic**: Your content subject
-   - **Platform**: Instagram, YouTube, or TikTok
-   - **Tone**: Casual, professional, funny, etc.
-   - **Target Audience**: Your intended viewers
-3. Click "Generate Content"
-4. Get complete script with hooks, hashtags, and music suggestions
+   - Topic
+   - Platform (Instagram, YouTube, TikTok)
+   - Tone
+   - Target Audience
+3. Click "Generate"
+4. View results in tabs: Script, Tags & Music, Timeline, Metadata
 
 ### API Usage
 
@@ -147,7 +158,7 @@ print(content["content"]["script"])
 }
 ```
 
-## 🏗️ Architecture
+## Architecture
 
 ```mermaid
 graph TB
@@ -179,51 +190,131 @@ graph TB
     Agent --> SQLite
 ```
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 ReelsBot/
 ├── app/
-│   ├── api/                 # FastAPI routes
-│   ├── core/                # Core configuration and utilities
-│   ├── models/              # Database models
-│   ├── services/            # Business logic services
-│   └── utils/               # Utility functions
+│   ├── api/
+│   ├── core/
+│   ├── models/
+│   ├── services/
+│   └── utils/
 ├── data/
-│   ├── prompts/             # LLM prompt templates
-│   └── templates/           # Content templates
+│   ├── prompts/
+│   └── templates/
 ├── tests/
-│   ├── unit/                # Unit tests
-│   └── integration/         # Integration tests
-├── config/                  # Configuration files
-├── scripts/                 # Utility scripts
-└── docker/                  # Docker configurations
+│   ├── unit/
+│   └── integration/
+├── config/
+├── scripts/
+└── docker/
 ```
 
-## 🧪 Testing
+## Testing
 
 ```bash
-# Run all tests
-pytest
-
-# Run with coverage
+pytest -q
 pytest --cov=app --cov-report=html
-
-# Run specific test types
-pytest tests/unit/          # Unit tests only
-pytest tests/integration/   # Integration tests only
+pytest tests/unit/
+pytest tests/integration/
 ```
 
-## 🚀 Deployment
+## Deployment
 
 ### Docker Production
 
 ```bash
-# Build and deploy
 docker-compose --profile monitoring up --build -d
-
-# View logs
 docker-compose logs -f reelsbot-api
 ```
 
- 
+## Screenshots
+
+Add screenshots of the interface to `screenshots/` folder:
+- `main-interface.png`
+- `script-output.png`
+- `tags-music.png`
+- `timeline.png`
+- `api-docs.png`
+
+Reference them in README:
+```markdown
+![Main Interface](./screenshots/main-interface.png)
+```
+
+## Troubleshooting
+
+### Common Issues
+
+**1. ModuleNotFoundError: No module named 'app'**
+
+Fixed in Dockerfile with `PYTHONPATH=/app`. For local development:
+```bash
+export PYTHONPATH=/path/to/Reels-bot
+```
+
+**2. WANDB Authentication Error**
+
+Weights & Biases is optional. Remove `WANDB_API_KEY` from `.env` or ignore the warning.
+
+**3. Python 3.13 compatibility issues**
+
+Use Docker or Python 3.11:
+```bash
+pyenv install 3.11.9
+pyenv local 3.11.9
+```
+
+**4. UI container keeps restarting**
+
+Check logs:
+```bash
+docker-compose logs reelsbot-ui
+```
+
+**5. API returns 401 errors**
+
+Add valid OpenAI API key to `.env` and restart:
+```bash
+docker-compose restart
+```
+
+**6. Port already in use**
+
+Change ports in `docker-compose.yml`:
+```yaml
+ports:
+  - "8001:8000"
+  - "7861:7860"
+```
+
+### Debug Commands
+
+```bash
+docker-compose ps
+docker-compose logs -f
+docker-compose logs -f reelsbot-api
+docker-compose restart
+docker-compose down && docker-compose build --no-cache && docker-compose up -d
+curl http://localhost:8000/health
+```
+
+## Recent Updates
+
+### Fixed Issues:
+- Docker PYTHONPATH configuration
+- Matplotlib cache permissions
+- Weights & Biases optional initialization
+- docker-compose.yml validation
+- Python 3.13 compatibility notes
+- SECRET_KEY pre-generated in `.env`
+
+### Ready to Deploy:
+- Docker containers build successfully
+- API responds to health checks
+- UI launches without errors
+- Database initializes correctly
+- Environment variables configured with defaults
+
+

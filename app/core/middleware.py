@@ -14,28 +14,23 @@ class LoggingMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request: Request, call_next: Callable) -> Response:
         """Process request and log details."""
         start_time = time.time()
-        
-        # Log request
+
         logger.info(
             f"Request: {request.method} {request.url.path} "
             f"from {request.client.host if request.client else 'unknown'}"
         )
-        
-        # Process request
+
         response = await call_next(request)
-        
-        # Calculate processing time
+
         process_time = time.time() - start_time
-        
-        # Log response
+
         logger.info(
             f"Response: {response.status_code} "
             f"processed in {process_time:.4f}s"
         )
-        
-        # Add timing header
+
         response.headers["X-Process-Time"] = str(process_time)
-        
+
         return response
 
 
@@ -51,16 +46,13 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
         """Check rate limits before processing request."""
         client_ip = request.client.host if request.client else "unknown"
         current_time = time.time()
-        
-        # Clean old entries
+
         self.requests = {
             ip: times for ip, times in self.requests.items()
             if any(t > current_time - 60 for t in times)
         }
-        
-        # Check current client
+
         if client_ip in self.requests:
-            # Filter recent requests (last minute)
             recent_requests = [
                 t for t in self.requests[client_ip]
                 if t > current_time - 60
@@ -82,8 +74,5 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
 
 def add_middlewares(app: FastAPI) -> None:
     """Add all middlewares to the FastAPI app."""
-    # Add logging middleware
     app.add_middleware(LoggingMiddleware)
-    
-    # Add rate limiting middleware
     app.add_middleware(RateLimitMiddleware, requests_per_minute=100)

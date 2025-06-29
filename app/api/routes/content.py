@@ -2,6 +2,7 @@
 
 import time
 from typing import Optional
+import inspect
 
 from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Request
 from loguru import logger
@@ -14,12 +15,16 @@ from app.models.content import ContentScript, GenerationRequest
 from app.services.content_generator import ContentGeneratorService
 
 router = APIRouter()
+async def _maybe_await(result):
+    if inspect.isawaitable(result):
+        return await result
+    return result
 
 
 class ContentGenerationRequest(BaseModel):
     """Request model for content generation."""
     topic: str = Field(..., min_length=1, max_length=200, description="Content topic")
-    platform: str = Field(..., regex="^(instagram|youtube|tiktok)$", description="Target platform")
+    platform: str = Field(..., pattern=r"^(instagram|youtube|tiktok)$", description="Target platform")
     tone: str = Field(..., min_length=1, max_length=100, description="Content tone (e.g., casual, professional, funny)")
     target_audience: str = Field(..., min_length=1, max_length=200, description="Target audience description")
     additional_requirements: Optional[str] = Field(None, max_length=1000, description="Additional requirements")
@@ -44,8 +49,7 @@ async def generate_content(
 ) -> ContentGenerationResponse:
     """Generate content script for social media reels."""
     start_time = time.time()
-    
-    # Create generation request record
+
     gen_request = GenerationRequest(
         topic=request_data.topic,
         platform=request_data.platform,
@@ -58,15 +62,13 @@ async def generate_content(
     )
     
     db.add(gen_request)
-    await db.commit()
-    await db.refresh(gen_request)
+    await _maybe_await(db.commit())
+    await _maybe_await(db.refresh(gen_request))
     
     try:
-        # Initialize services
         content_service = ContentGeneratorService()
         trends = None
-        
-        # Generate content
+
         content_result = await content_service.generate_content(
             topic=request_data.topic,
             platform=request_data.platform,
@@ -76,11 +78,9 @@ async def generate_content(
             include_music=request_data.include_music,
             trends=trends
         )
-        
-        # Calculate generation time
+
         generation_time = time.time() - start_time
-        
-        # Save content script
+
         content_script = ContentScript(
             topic=request_data.topic,
             platform=request_data.platform,
@@ -98,15 +98,14 @@ async def generate_content(
         )
         
         db.add(content_script)
-        await db.commit()
-        await db.refresh(content_script)
-        
-        # Update generation request
+        await _maybe_await(db.commit())
+        await _maybe_await(db.refresh(content_script))
+
         gen_request.success = "success"
         gen_request.content_script_id = content_script.id
-        gen_request.processing_time = int(generation_time * 1000)  # Convert to milliseconds
+        gen_request.processing_time = int(generation_time * 1000)
         gen_request.completed_at = content_script.created_at
-        await db.commit()
+        await _maybe_await(db.commit())
         
         logger.info(f"Content generated successfully for request {gen_request.id}")
         
@@ -116,16 +115,15 @@ async def generate_content(
             content=content_script.to_dict(),
             generation_time=generation_time
         )
-        
+    
     except Exception as e:
         error_message = str(e)
         logger.error(f"Content generation failed for request {gen_request.id}: {error_message}")
-        
-        # Update generation request with error
+
         gen_request.success = "failed"
         gen_request.error_message = error_message
         gen_request.processing_time = int((time.time() - start_time) * 1000)
-        await db.commit()
+        await _maybe_await(db.commit())
         
         if isinstance(e, ContentGenerationError):
             raise HTTPException(status_code=422, detail=error_message)
@@ -139,7 +137,7 @@ async def get_content_script(
     db: AsyncSession = Depends(get_db)
 ) -> dict:
     """Get a content script by ID."""
-    result = await db.get(ContentScript, script_id)
+    result = await _maybe_await(db.get(ContentScript, script_id))
     if not result:
         raise HTTPException(status_code=404, detail="Content script not found")
     
@@ -152,7 +150,7 @@ async def get_generation_request(
     db: AsyncSession = Depends(get_db)
 ) -> dict:
     """Get a generation request by ID."""
-    result = await db.get(GenerationRequest, request_id)
+    result = await _maybe_await(db.get(GenerationRequest, request_id))
     if not result:
         raise HTTPException(status_code=404, detail="Generation request not found")
     

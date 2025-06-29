@@ -28,6 +28,8 @@ FROM python:3.11-slim as production
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 ENV PATH="/app/.local/bin:$PATH"
+ENV PYTHONPATH=/app
+ENV MPLCONFIGDIR=/tmp/matplotlib
 
 # Install only runtime dependencies
 RUN apt-get update && apt-get install -y \

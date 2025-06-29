@@ -2,7 +2,6 @@ import logging
 from contextlib import asynccontextmanager
 from typing import AsyncGenerator
 
-import wandb
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
@@ -19,18 +18,26 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     settings = get_settings()
     await init_db()
     logger.info("Database initialized")
-    if settings.WANDB_API_KEY:
-        wandb.init(
-            project=settings.WANDB_PROJECT,
-            config={
-                "app_version": settings.APP_VERSION,
-                "environment": "production" if not settings.DEBUG else "development"
-            }
-        )
-        logger.info("Weights & Biases initialized")
+    if settings.WANDB_API_KEY and settings.WANDB_API_KEY != "your-wandb-api-key":
+        try:
+            import wandb
+            wandb.init(
+                project=settings.WANDB_PROJECT,
+                config={
+                    "app_version": settings.APP_VERSION,
+                    "environment": "production" if not settings.DEBUG else "development"
+                }
+            )
+            logger.info("Weights & Biases initialized")
+        except Exception as e:
+            logger.warning(f"Failed to initialize Weights & Biases: {e}. Continuing without monitoring.")
     yield
-    if settings.WANDB_API_KEY:
-        wandb.finish()
+    if settings.WANDB_API_KEY and settings.WANDB_API_KEY != "your-wandb-api-key":
+        try:
+            import wandb
+            wandb.finish()
+        except Exception:
+            pass
     logger.info("Application shutdown complete")
 
 
@@ -62,7 +69,6 @@ def create_app() -> FastAPI:
     return app
 
 
-# Create the app instance
 app = create_app()
 
 
