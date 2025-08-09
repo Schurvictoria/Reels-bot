@@ -237,9 +237,4 @@ docker-compose --profile monitoring up --build -d
 docker-compose logs -f reelsbot-api
 ```
 
-### CI/CD Pipeline
-
-GitHub Actions automatically:
-- Runs tests and security checks
-- Builds Docker images
-- Deploys to production (configure in `.github/workflows/ci-cd.yml`)
+ 
