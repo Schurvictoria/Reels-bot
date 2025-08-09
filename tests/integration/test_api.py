@@ -74,8 +74,7 @@ class TestContentEndpoints:
             "platform": "instagram",
             "tone": "casual",
             "target_audience": "Test audience",
-            "include_music": False,
-            "include_trends": False
+            "include_music": False
         }
         
         response = test_client.post("/api/v1/content/generate", json=request_data)

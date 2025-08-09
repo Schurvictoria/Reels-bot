@@ -1,5 +1,3 @@
-"""Gradio web interface for ReelsBot."""
-
 import asyncio
 import json
 from typing import Optional, Tuple
@@ -12,14 +10,12 @@ from app.core.config import get_settings
 
 
 class ReelsBotInterface:
-    """Gradio interface for ReelsBot application."""
     
     def __init__(self, api_base_url: str = "http://localhost:8000"):
         self.api_base_url = api_base_url
         self.settings = get_settings()
     
     def create_interface(self) -> gr.Blocks:
-        """Create and configure the Gradio interface."""
         
         with gr.Blocks(
             title="ReelsBot - AI Content Generator",
@@ -27,23 +23,20 @@ class ReelsBotInterface:
             css=self._get_custom_css()
         ) as interface:
             
-            # Header
             gr.HTML("""
                 <div style="text-align: center; margin-bottom: 30px;">
                     <h1>🎬 ReelsBot</h1>
-                    <p>AI-powered content generation for Instagram Reels, YouTube Shorts, and TikTok</p>
+                    <p>Make scroll-stopping Reels, Shorts, and TikToks in seconds.</p>
                 </div>
             """)
             
-            # Main interface
             with gr.Row():
-                # Input column
                 with gr.Column(scale=1):
-                    gr.Markdown("### Content Parameters")
+                    gr.Markdown("### Content")
                     
                     topic = gr.Textbox(
                         label="Topic",
-                        placeholder="E.g., 'Morning skincare routine', 'Cooking pasta', 'Productivity tips'",
+                        placeholder="e.g., '2-minute pasta', 'Morning routine', 'Study hacks'",
                         lines=2
                     )
                     
@@ -64,37 +57,33 @@ class ReelsBotInterface:
                     
                     target_audience = gr.Textbox(
                         label="Target Audience",
-                        placeholder="E.g., 'Young professionals 25-35', 'Beauty enthusiasts', 'Fitness beginners'",
+                        placeholder="Who are we talking to?",
                         lines=2
                     )
                     
                     additional_requirements = gr.Textbox(
-                        label="Additional Requirements (Optional)",
-                        placeholder="Any specific requirements, style preferences, or constraints",
+                        label="Extras (optional)",
+                        placeholder="Visuals, constraints, style — drop it here",
                         lines=3
                     )
                     
                     with gr.Row():
-                        include_music = gr.Checkbox(label="Include Music Suggestions", value=True)
-                        include_trends = gr.Checkbox(label="Include Trend Analysis", value=True)
+                        include_music = gr.Checkbox(label="Suggest music", value=True)
                     
-                    generate_btn = gr.Button("🎬 Generate Content", variant="primary", size="lg")
+                    generate_btn = gr.Button("🎬 Generate", variant="primary", size="lg")
                 
-                # Output column
                 with gr.Column(scale=1):
-                    gr.Markdown("### Generated Content")
+                    gr.Markdown("### Output")
                     
-                    # Status indicator
                     status = gr.Textbox(label="Status", interactive=False)
                     
-                    # Content output tabs
                     with gr.Tabs():
                         with gr.TabItem("📝 Script"):
                             hook_output = gr.Textbox(label="Hook", lines=3, interactive=False)
                             storyline_output = gr.Textbox(label="Storyline", lines=4, interactive=False)
                             script_output = gr.Textbox(label="Complete Script", lines=8, interactive=False)
                         
-                        with gr.TabItem("🏷️ Hashtags & Music"):
+                        with gr.TabItem("🏷️ Tags & Music"):
                             hashtags_output = gr.Textbox(label="Hashtags", lines=3, interactive=False)
                             music_output = gr.JSON(label="Music Suggestions")
                         
@@ -104,8 +93,7 @@ class ReelsBotInterface:
                         with gr.TabItem("📊 Metadata"):
                             metadata_output = gr.JSON(label="Generation Details")
             
-            # Examples section
-            gr.Markdown("### Example Topics")
+            gr.Markdown("### Try these")
             gr.Examples(
                 examples=[
                     ["5-minute morning routine", "instagram", "energetic", "Busy professionals", ""],
@@ -116,12 +104,11 @@ class ReelsBotInterface:
                 inputs=[topic, platform, tone, target_audience, additional_requirements]
             )
             
-            # Event handlers
             generate_btn.click(
                 fn=self.generate_content,
                 inputs=[
                     topic, platform, tone, target_audience, 
-                    additional_requirements, include_music, include_trends
+                    additional_requirements, include_music
                 ],
                 outputs=[
                     status, hook_output, storyline_output, script_output,
@@ -138,42 +125,33 @@ class ReelsBotInterface:
         tone: str,
         target_audience: str,
         additional_requirements: str,
-        include_music: bool,
-        include_trends: bool
+        include_music: bool
     ) -> Tuple:
-        """Generate content using the ReelsBot API."""
         try:
-            # Validate inputs
             if not topic.strip():
-                return ("❌ Error: Topic is required", "", "", "", "", {}, {}, {})
+                return ("❌ Need a topic", "", "", "", "", {}, {}, {})
             
             if not target_audience.strip():
-                return ("❌ Error: Target audience is required", "", "", "", "", {}, {}, {})
+                return ("❌ Who's this for?", "", "", "", "", {}, {}, {})
             
-            # Update status
-            status = "🔄 Generating content..."
+            status = "🔄 Cooking your script..."
             
-            # Prepare request data
             request_data = {
                 "topic": topic.strip(),
                 "platform": platform,
                 "tone": tone,
                 "target_audience": target_audience.strip(),
                 "additional_requirements": additional_requirements.strip() if additional_requirements else None,
-                "include_music": include_music,
-                "include_trends": include_trends
+                "include_music": include_music
             }
             
-            # Make API request
             response = asyncio.run(self._make_api_request(request_data))
             
             if response["success"]:
                 content = response["content"]
                 
-                # Format hashtags
                 hashtags_formatted = " ".join([f"#{tag}" for tag in content.get("hashtags", [])])
                 
-                # Prepare metadata
                 metadata = {
                     "generation_time": response.get("generation_time"),
                     "model_used": content.get("model_used"),
@@ -182,7 +160,7 @@ class ReelsBotInterface:
                 }
                 
                 return (
-                    "✅ Content generated successfully!",
+                    "✅ All set! Here's your script.",
                     content.get("hook", ""),
                     content.get("storyline", ""),
                     content.get("script", ""),
@@ -193,14 +171,13 @@ class ReelsBotInterface:
                 )
             else:
                 error_msg = response.get("error", "Unknown error occurred")
-                return (f"❌ Error: {error_msg}", "", "", "", "", {}, {}, {})
+                return (f"❌ {error_msg}", "", "", "", "", {}, {}, {})
         
         except Exception as e:
             logger.error(f"Content generation failed: {str(e)}")
-            return (f"❌ Error: {str(e)}", "", "", "", "", {}, {}, {})
+            return (f"❌ {str(e)}", "", "", "", "", {}, {}, {})
     
     async def _make_api_request(self, request_data: dict) -> dict:
-        """Make request to the ReelsBot API."""
         async with httpx.AsyncClient() as client:
             try:
                 response = await client.post(
@@ -215,7 +192,7 @@ class ReelsBotInterface:
                 logger.error(f"API request failed: {str(e)}")
                 return {
                     "success": False,
-                    "error": f"Failed to connect to API: {str(e)}"
+                    "error": f"Can't reach API: {str(e)}"
                 }
             
             except httpx.HTTPStatusError as e:
@@ -230,7 +207,6 @@ class ReelsBotInterface:
                 }
     
     def _get_custom_css(self) -> str:
-        """Get custom CSS for the interface."""
         return """
         .gradio-container {
             max-width: 1200px !important;
@@ -265,7 +241,6 @@ class ReelsBotInterface:
 
 
 def launch_interface(port: int = 7860, share: bool = False):
-    """Launch the Gradio interface."""
     interface_app = ReelsBotInterface()
     interface = interface_app.create_interface()
     

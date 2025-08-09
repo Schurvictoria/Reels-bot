@@ -11,8 +11,8 @@ ReelsBot solves the pain point where creators and marketers waste hours brainsto
 - **Multi-Platform Support**: Instagram Reels, YouTube Shorts, TikTok
 - **Complete Content Generation**: Hook, storyline, script, timestamps
 - **Smart Hashtag Suggestions**: Trending and niche-specific tags
-- **Music Recommendations**: Spotify API integration
-- **Trend Analysis**: YouTube Data API for current trends
+- **Music Recommendations**: Built-in generic suggestions (no external APIs)
+- **Trend Analysis**: Heuristic-based trends (no external APIs)
 - **Quality Scoring**: AI-powered content quality assessment
 - **Web Interface**: Beautiful Gradio UI for easy interaction
 - **REST API**: FastAPI backend for integration
@@ -23,7 +23,7 @@ ReelsBot solves the pain point where creators and marketers waste hours brainsto
 - **AI/LLM**: OpenAI GPT-4o, LangChain,
 - **Backend**: Python, FastAPI
 - **Frontend**: Gradio
-- **APIs**: Spotify API, YouTube Data API
+- **APIs**: None required for music or trends
 - **Monitoring**: Weights & Biases
 - **Deployment**: Docker
 - **Testing**: pytest
@@ -32,8 +32,7 @@ ReelsBot solves the pain point where creators and marketers waste hours brainsto
 
 - Python 3.10+
 - OpenAI API key
-- (Optional) Spotify API credentials
-- (Optional) YouTube Data API key
+- (Optional) None for music/trends
 - (Optional) Weights & Biases account
 
 ## 🚀 Quick Start
@@ -63,9 +62,6 @@ SECRET_KEY=your-secret-key
 
 Optional (for enhanced features):
 ```env
-SPOTIFY_CLIENT_ID=your-spotify-client-id
-SPOTIFY_CLIENT_SECRET=your-spotify-client-secret
-YOUTUBE_API_KEY=your-youtube-api-key
 WANDB_API_KEY=your-wandb-api-key
 ```
 
@@ -122,7 +118,7 @@ response = requests.post("http://localhost:8000/api/v1/content/generate", json={
     "tone": "casual",
     "target_audience": "Young professionals",
     "include_music": True,
-    "include_trends": True
+     "include_trends": false
 })
 
 content = response.json()
@@ -161,7 +157,7 @@ graph TB
     subgraph "Core Application"
         Agent[LangChain Agent Orchestrator]
         ContentGen[Content Generation Service]
-        TrendAnalysis[Trend Analysis Service]
+        
     end
     
     subgraph "AI/LLM Layer"
@@ -170,23 +166,16 @@ graph TB
         PromptMgr[Prompt Template Manager]
     end
     
-    subgraph "External APIs"
-        SpotifyAPI[Spotify API]
-        YouTubeAPI[YouTube Data API]
-    end
-    
     subgraph "Data Layer"
         SQLite[(SQLite Database)]
-        Cache[Redis Cache]
     end
     
     UI --> API
     API --> Agent
     Agent --> ContentGen
-    Agent --> TrendAnalysis
+    
     ContentGen --> GPT
-    TrendAnalysis --> YouTubeAPI
-    ContentGen --> SpotifyAPI
+    
     Agent --> SQLite
 ```
 

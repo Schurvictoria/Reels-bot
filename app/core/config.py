@@ -24,7 +24,6 @@ class Settings(BaseSettings):
     
     # Database
     DATABASE_URL: str = Field(default="sqlite:///./reelsbot.db", env="DATABASE_URL")
-    REDIS_URL: str = Field(default="redis://localhost:6379", env="REDIS_URL")
     
     # OpenAI
     OPENAI_API_KEY: str = Field(env="OPENAI_API_KEY")
@@ -32,10 +31,7 @@ class Settings(BaseSettings):
     OPENAI_TEMPERATURE: float = Field(default=0.7, env="OPENAI_TEMPERATURE")
     OPENAI_MAX_TOKENS: int = Field(default=2000, env="OPENAI_MAX_TOKENS")
     
-    # External APIs
-    SPOTIFY_CLIENT_ID: Optional[str] = Field(default=None, env="SPOTIFY_CLIENT_ID")
-    SPOTIFY_CLIENT_SECRET: Optional[str] = Field(default=None, env="SPOTIFY_CLIENT_SECRET")
-    YOUTUBE_API_KEY: Optional[str] = Field(default=None, env="YOUTUBE_API_KEY")
+    # External APIs (Spotify/YouTube removed)
     TIKTOK_ACCESS_TOKEN: Optional[str] = Field(default=None, env="TIKTOK_ACCESS_TOKEN")
     
     # Monitoring
