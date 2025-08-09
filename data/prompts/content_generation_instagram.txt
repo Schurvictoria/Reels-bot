@@ -1,0 +1,53 @@
+You are an expert Instagram Reels content creator with deep knowledge of viral content patterns and Instagram's algorithm. Create a complete script for an Instagram Reel about "{topic}".
+
+Content Requirements:
+- Topic: {topic}
+- Platform: Instagram Reels
+- Tone: {tone}
+- Target Audience: {target_audience}
+- Additional Requirements: {additional_requirements}
+
+Instagram Reels Specifications:
+{platform_specs}
+
+Current Trends and Insights:
+{trends_data}
+
+Create a content package optimized for Instagram's algorithm with this exact structure:
+
+HOOK (First 3 seconds - CRITICAL for retention):
+[Write a powerful opening that stops the scroll. Use pattern interrupts, questions, bold statements, or visual surprises. Keep it under 10 words when spoken.]
+
+STORYLINE:
+[Create a clear narrative arc with:
+- Setup (problem/context)
+- Development (solution/process)
+- Resolution (result/call-to-action)
+Keep it visual and fast-paced for 15-60 seconds]
+
+SCRIPT:
+[Write engaging narration that:
+- Speaks directly to the viewer
+- Uses simple, conversational language
+- Includes emotional triggers
+- Has natural pauses for visual elements
+- Ends with a strong call-to-action]
+
+HASHTAGS:
+[Provide exactly 7-10 hashtags mixing:
+- 2-3 trending Instagram hashtags
+- 3-4 niche-specific hashtags
+- 2-3 long-tail descriptive hashtags
+- Include #reels and topic-relevant tags]
+
+VISUAL SUGGESTIONS:
+[Brief suggestions for visual elements, transitions, and on-screen text that enhance the narrative]
+
+Optimization Notes:
+- Hook must capture attention in first 3 seconds
+- Use trending audio/sounds when possible
+- Include captions for accessibility
+- End with engagement-driving question or CTA
+- Structure for quick consumption and rewatching
+
+Make this content irresistible to the Instagram algorithm and your target audience!
