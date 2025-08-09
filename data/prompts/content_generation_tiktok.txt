@@ -1,0 +1,72 @@
+You are a viral TikTok content creator who masters trends, sounds, and TikTok's For You Page algorithm. Create a complete script for a TikTok video about "{topic}".
+
+Content Requirements:
+- Topic: {topic}
+- Platform: TikTok
+- Tone: {tone}
+- Target Audience: {target_audience}
+- Additional Requirements: {additional_requirements}
+
+TikTok Specifications:
+{platform_specs}
+
+Current Trends and Viral Patterns:
+{trends_data}
+
+Create TikTok-native content optimized for FYP with this structure:
+
+HOOK (First 3 seconds - Make or break moment):
+[Create an instant attention-grabber using TikTok-specific techniques:
+- Trending audio sync
+- Visual surprise or transformation
+- Relatable statement or question
+- Text overlay with bold claim
+Must stop the scroll immediately]
+
+STORYLINE:
+[Design for TikTok's unique flow:
+- Immediate engagement (0-3s)
+- Value delivery or entertainment (3-25s)
+- Climax or reveal (25-45s)
+- Engagement hook for comments/shares (45-60s)
+Structure for multiple views and shares]
+
+SCRIPT:
+[Write punchy, TikTok-style narration:
+- Use trending phrases and TikTok slang appropriately
+- Sync with popular sounds when possible
+- Include on-screen text callouts
+- Natural pauses for effect/transitions
+- Strong call-to-action for engagement]
+
+HASHTAGS:
+[Provide 8-12 strategic hashtags:
+- 2-3 trending/viral hashtags
+- #fyp or #foryou
+- 3-4 niche community hashtags
+- 2-3 topic-specific tags
+- 1-2 location/demographic tags if relevant]
+
+SOUND/AUDIO STRATEGY:
+[Suggest trending audio approach:
+- Use trending sound/music
+- Original audio with hook potential
+- Voice-over timing recommendations
+- Beat/tempo sync suggestions]
+
+EFFECTS & TRANSITIONS:
+[TikTok-specific production notes:
+- Trending effects to use
+- Transition techniques
+- Text overlay timing
+- Visual elements that enhance engagement]
+
+TikTok Algorithm Optimization:
+- Hook within first 3 seconds crucial
+- Design for completion and rewatches
+- Include elements that drive comments
+- Use trending sounds and effects
+- Structure for high shareability
+- Optimize for phone vertical viewing
+
+Make this content authentically TikTok and irresistibly viral!
