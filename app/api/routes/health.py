@@ -1,5 +1,3 @@
-"""Health check endpoints."""
-
 from datetime import datetime
 from typing import Dict
 
@@ -14,7 +12,6 @@ router = APIRouter()
 
 @router.get("/")
 async def health_check() -> Dict[str, str]:
-    """Basic health check endpoint."""
     return {
         "status": "healthy",
         "timestamp": datetime.utcnow().isoformat(),
@@ -26,10 +23,7 @@ async def health_check() -> Dict[str, str]:
 async def detailed_health_check(
     db: AsyncSession = Depends(get_db)
 ) -> Dict[str, str]:
-    """Detailed health check including database connectivity."""
     settings = get_settings()
-    
-    # Test database connection
     try:
         await db.execute("SELECT 1")
         db_status = "connected"

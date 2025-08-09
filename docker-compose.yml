@@ -9,14 +9,12 @@ services:
       - "8000:8000"
     environment:
       - DATABASE_URL=sqlite:///./data/reelsbot.db
-      - REDIS_URL=redis://redis:6379
     env_file:
       - .env
     volumes:
       - ./data:/app/data
       - ./logs:/app/logs
     depends_on:
-      - redis
     restart: unless-stopped
     networks:
       - reelsbot-network
@@ -43,23 +41,7 @@ services:
     networks:
       - reelsbot-network
 
-  # Redis for caching
-  redis:
-    image: redis:7-alpine
-    container_name: reelsbot-redis
-    ports:
-      - "6379:6379"
-    volumes:
-      - redis_data:/data
-    restart: unless-stopped
-    networks:
-      - reelsbot-network
-    command: redis-server --appendonly yes
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
+  
 
   # Prometheus for monitoring (optional)
   prometheus:
@@ -102,7 +84,6 @@ services:
       - monitoring
 
 volumes:
-  redis_data:
   prometheus_data:
   grafana_data:
 

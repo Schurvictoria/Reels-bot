@@ -1,9 +1,12 @@
-"""Content generation service using LangChain and OpenAI."""
-
 import json
 from typing import Dict, List, Optional
 
-import wandb
+try:
+    import wandb  # optional
+    _WANDB_AVAILABLE = True
+except Exception:
+    wandb = None  # type: ignore
+    _WANDB_AVAILABLE = False
 from langchain.chains import LLMChain
 from langchain.memory import ConversationBufferMemory
 from langchain.prompts import PromptTemplate
@@ -12,12 +15,10 @@ from loguru import logger
 
 from app.core.config import get_settings
 from app.core.exceptions import ContentGenerationError
-from app.services.music_service import MusicService
 from app.utils.prompt_loader import PromptLoader
 
 
 class ContentGeneratorService:
-    """Service for generating social media content using LangChain."""
     
     def __init__(self):
         self.settings = get_settings()
@@ -32,7 +33,6 @@ class ContentGeneratorService:
             return_messages=True
         )
         self.prompt_loader = PromptLoader()
-        self.music_service = MusicService()
     
     async def generate_content(
         self,
@@ -46,7 +46,7 @@ class ContentGeneratorService:
     ) -> Dict:
         """Generate complete content script for social media reel."""
         try:
-            logger.info(f"Generating content for topic: {topic}, platform: {platform}")
+            logger.info(f"Generating content for topic '{topic}' on {platform}")
             
             # Load platform-specific prompt template
             prompt_template = self.prompt_loader.get_template(
@@ -74,7 +74,7 @@ class ContentGeneratorService:
             # Prepare platform specifications
             platform_specs = self._get_platform_specs(platform)
             
-            # Prepare trends data
+            # Prepare trends data (optional input only)
             trends_data = ""
             if trends:
                 trends_data = f"""
@@ -98,25 +98,14 @@ Current Trends:
             # Parse the generated content
             content = self._parse_generated_content(result)
             
-            # Add music suggestions if requested
-            if include_music and self.settings.SPOTIFY_CLIENT_ID:
-                try:
-                    music_suggestions = await self.music_service.get_music_suggestions(
-                        topic=topic,
-                        tone=tone,
-                        platform=platform
-                    )
-                    content["music_suggestions"] = music_suggestions
-                except Exception as e:
-                    logger.warning(f"Failed to get music suggestions: {str(e)}")
-                    content["music_suggestions"] = []
+            # Music suggestions via external APIs removed
             
             # Add metadata
             content["model_used"] = self.settings.OPENAI_MODEL
             content["quality_score"] = self._calculate_quality_score(content)
             
             # Log to Weights & Biases if configured
-            if self.settings.WANDB_API_KEY:
+            if self.settings.WANDB_API_KEY and _WANDB_AVAILABLE:
                 wandb.log({
                     "content_generation": {
                         "topic": topic,
@@ -128,7 +117,7 @@ Current Trends:
                     }
                 })
             
-            logger.info("Content generation completed successfully")
+            logger.info("Content generated")
             return content
             
         except Exception as e:

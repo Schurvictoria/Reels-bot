@@ -1,5 +1,3 @@
-"""User-related database models."""
-
 from datetime import datetime
 from typing import Dict
 
@@ -10,33 +8,27 @@ from app.core.database import Base
 
 
 class User(Base):
-    """Model for user tracking and analytics."""
     
     __tablename__ = "users"
     
     id = Column(Integer, primary_key=True, index=True)
     
-    # User identification (for analytics, not auth)
     session_id = Column(String(100), unique=True, index=True)
-    ip_address = Column(String(45), nullable=True)  # IPv6 support
+    ip_address = Column(String(45), nullable=True)
     user_agent = Column(String(500), nullable=True)
     
-    # Usage statistics
     total_requests = Column(Integer, default=0)
     successful_generations = Column(Integer, default=0)
     failed_generations = Column(Integer, default=0)
     
-    # Preferences (learned from usage)
     preferred_platform = Column(String(50), nullable=True)
     preferred_tone = Column(String(100), nullable=True)
-    common_topics = Column(String(500), nullable=True)  # Comma-separated
+    common_topics = Column(String(500), nullable=True)
     
-    # Timestamps
     first_visit = Column(DateTime(timezone=True), server_default=func.now())
     last_visit = Column(DateTime(timezone=True), onupdate=func.now())
     
     def to_dict(self) -> Dict:
-        """Convert model to dictionary."""
         return {
             "id": self.id,
             "session_id": self.session_id,

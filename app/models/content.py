@@ -1,5 +1,3 @@
-"""Content-related database models."""
-
 from datetime import datetime
 from typing import Dict, List, Optional
 
@@ -10,35 +8,30 @@ from app.core.database import Base
 
 
 class ContentScript(Base):
-    """Model for storing generated content scripts."""
     
     __tablename__ = "content_scripts"
     
     id = Column(Integer, primary_key=True, index=True)
     topic = Column(String(200), nullable=False, index=True)
-    platform = Column(String(50), nullable=False, index=True)  # instagram, youtube, tiktok
+    platform = Column(String(50), nullable=False, index=True)
     tone = Column(String(100), nullable=False)
     target_audience = Column(String(200), nullable=False)
     
-    # Generated content
     hook = Column(Text, nullable=False)
     storyline = Column(Text, nullable=False)
     script = Column(Text, nullable=False)
-    timestamps = Column(JSON, nullable=True)  # List of timestamp objects
-    music_suggestions = Column(JSON, nullable=True)  # List of music suggestions
-    hashtags = Column(JSON, nullable=True)  # List of hashtags
+    timestamps = Column(JSON, nullable=True)
+    music_suggestions = Column(JSON, nullable=True)
+    hashtags = Column(JSON, nullable=True)
     
-    # Metadata
-    generation_time = Column(Integer, nullable=True)  # Time taken to generate in seconds
+    generation_time = Column(Integer, nullable=True)
     model_used = Column(String(100), nullable=True)
-    quality_score = Column(Integer, nullable=True)  # 1-10 quality rating
+    quality_score = Column(Integer, nullable=True)
     
-    # Timestamps
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
     
     def to_dict(self) -> Dict:
-        """Convert model to dictionary."""
         return {
             "id": self.id,
             "topic": self.topic,
@@ -60,36 +53,30 @@ class ContentScript(Base):
 
 
 class GenerationRequest(Base):
-    """Model for tracking content generation requests."""
     
     __tablename__ = "generation_requests"
     
     id = Column(Integer, primary_key=True, index=True)
     
-    # Request parameters
     topic = Column(String(200), nullable=False)
     platform = Column(String(50), nullable=False)
     tone = Column(String(100), nullable=False)
     target_audience = Column(String(200), nullable=False)
     additional_requirements = Column(Text, nullable=True)
     
-    # Request metadata
-    user_ip = Column(String(45), nullable=True)  # IPv6 support
+    user_ip = Column(String(45), nullable=True)
     user_agent = Column(String(500), nullable=True)
     session_id = Column(String(100), nullable=True)
     
-    # Response metadata
-    success = Column(String(10), nullable=False, default="pending")  # pending, success, failed
+    success = Column(String(10), nullable=False, default="pending")
     error_message = Column(Text, nullable=True)
-    content_script_id = Column(Integer, nullable=True)  # Foreign key to ContentScript
-    processing_time = Column(Integer, nullable=True)  # Processing time in milliseconds
+    content_script_id = Column(Integer, nullable=True)
+    processing_time = Column(Integer, nullable=True)
     
-    # Timestamps
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     completed_at = Column(DateTime(timezone=True), nullable=True)
     
     def to_dict(self) -> Dict:
-        """Convert model to dictionary."""
         return {
             "id": self.id,
             "topic": self.topic,

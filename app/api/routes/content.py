@@ -12,7 +12,6 @@ from app.core.database import get_db
 from app.core.exceptions import ContentGenerationError
 from app.models.content import ContentScript, GenerationRequest
 from app.services.content_generator import ContentGeneratorService
-from app.services.trend_analyzer import TrendAnalyzerService
 
 router = APIRouter()
 
@@ -25,7 +24,6 @@ class ContentGenerationRequest(BaseModel):
     target_audience: str = Field(..., min_length=1, max_length=200, description="Target audience description")
     additional_requirements: Optional[str] = Field(None, max_length=1000, description="Additional requirements")
     include_music: bool = Field(default=True, description="Include music suggestions")
-    include_trends: bool = Field(default=True, description="Include current trends analysis")
 
 
 class ContentGenerationResponse(BaseModel):
@@ -66,18 +64,7 @@ async def generate_content(
     try:
         # Initialize services
         content_service = ContentGeneratorService()
-        trend_service = TrendAnalyzerService() if request_data.include_trends else None
-        
-        # Get trend analysis if requested
         trends = None
-        if trend_service:
-            try:
-                trends = await trend_service.analyze_trends(
-                    topic=request_data.topic,
-                    platform=request_data.platform
-                )
-            except Exception as e:
-                logger.warning(f"Failed to get trends: {str(e)}")
         
         # Generate content
         content_result = await content_service.generate_content(

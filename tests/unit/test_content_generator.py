@@ -18,14 +18,12 @@ class TestContentGeneratorService:
             mock_settings.return_value.OPENAI_MODEL = "gpt-4o"
             mock_settings.return_value.OPENAI_TEMPERATURE = 0.7
             mock_settings.return_value.OPENAI_MAX_TOKENS = 2000
-            mock_settings.return_value.SPOTIFY_CLIENT_ID = "test-client"
             mock_settings.return_value.WANDB_API_KEY = None
             mock_settings.return_value.DEBUG = False
             
             with patch('app.services.content_generator.ChatOpenAI'):
-                with patch('app.services.content_generator.MusicService'):
-                    service = ContentGeneratorService()
-                    return service
+                service = ContentGeneratorService()
+                return service
     
     @pytest.mark.asyncio
     async def test_generate_content_success(self, content_service):
